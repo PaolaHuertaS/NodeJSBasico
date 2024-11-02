@@ -1,4 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { NotFoundError } from 'rxjs';
+import { CreateTaskDto } from './dto/createtask.dto';
+import { UpdateTaskDto } from './dto/updatetask.dto';
 
 export interface User {
     name: string;
@@ -15,13 +18,24 @@ export class TasksService {
         return this.tasks;
     }
 
-    createTask(task: any){
-        console.log(task)
-        this.tasks.push(task)
+    getTask(id: number) {
+       const taskFound = this.tasks.find(task => task.id === id);
+        if (!taskFound){
+            return new NotFoundException("Tarea sin id encontrada");
+        }
+    
+    }
+
+    createTask(task: CreateTaskDto){
+        this.tasks.push({
+            ...task, 
+            id: this.tasks.length + 1,
+        })
         return task
     }
 
-    updateTask(){
+    updateTask(task: UpdateTaskDto){
+        console.log(task)
         return "actualizando tareas"
     }
 
